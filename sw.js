@@ -1,4 +1,4 @@
-const CACHE = "sensorypass-v3";
+const CACHE = "sensorypass-v4";
 const SHELL = [
   "./", "index.html", "styles.css", "app.js", "manifest.webmanifest",
   "icon.png", "logo.png", "icon-192.png", "icon-512.png"
