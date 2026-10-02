@@ -1343,3 +1343,11 @@ function init() {
 }
 
 document.addEventListener("DOMContentLoaded", init);
+
+// Mantém o mapa correto quando a janela muda de tamanho ou o aparelho gira
+window.addEventListener("resize", () => ui.map && ui.map.invalidateSize());
+
+// PWA: permite instalar e abrir offline
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}

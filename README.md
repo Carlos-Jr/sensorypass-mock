@@ -14,6 +14,18 @@ python3 -m http.server 8000
 # depois acesse http://localhost:8000
 ```
 
+## Docker
+
+```bash
+docker compose up -d --build   # http://localhost:8099
+docker compose down
+```
+
+## Instalar como app (PWA)
+
+O site é um web app instalável. No Android (Chrome), abra a URL e use **Instalar app** / **Adicionar à tela inicial**.
+A instalação exige **HTTPS** (ou `localhost`). O layout se adapta a celular, tablet e desktop (menu lateral).
+
 ## Estrutura
 
 - `index.html` — estrutura das telas, barra inferior e modal

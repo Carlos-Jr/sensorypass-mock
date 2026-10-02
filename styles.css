@@ -110,6 +110,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
   min-height: 100vh;
+  min-height: 100dvh;
+  overscroll-behavior-y: none;
+  touch-action: manipulation;
 }
 
 img { max-width: 100%; display: block; }
@@ -145,6 +148,7 @@ svg.lucide { width: 20px; height: 20px; stroke-width: 1.9; flex-shrink: 0; }
   position: relative;
   max-width: var(--app-max);
   min-height: 100vh;
+  min-height: 100dvh;
   margin: 0 auto;
   background: var(--color-background);
   overflow-x: hidden;
@@ -159,22 +163,6 @@ svg.lucide { width: 20px; height: 20px; stroke-width: 1.9; flex-shrink: 0; }
   background-size: 100% auto;
   opacity: .8;
   pointer-events: none;
-}
-
-@media (min-width: 560px) {
-  body {
-    background:
-      radial-gradient(900px 500px at 10% 0%, rgba(224,131,194,.18), transparent 60%),
-      radial-gradient(800px 600px at 100% 100%, rgba(7,176,174,.14), transparent 60%),
-      var(--color-background-warm);
-    padding: 24px 0;
-  }
-  .app {
-    min-height: calc(100vh - 48px);
-    border-radius: 36px;
-    box-shadow: 0 30px 80px -30px rgba(76, 60, 50, .35), 0 0 0 1px rgba(76, 60, 50, .05);
-    overflow: hidden;
-  }
 }
 
 /* ---------- Splash ---------- */
@@ -505,7 +493,8 @@ svg.lucide { width: 20px; height: 20px; stroke-width: 1.9; flex-shrink: 0; }
 }
 .sheet {
   position: relative; width: 100%; max-width: var(--app-max);
-  max-height: 92vh; overflow-y: auto; overscroll-behavior: contain;
+  max-height: 92vh;
+  max-height: 92dvh; overflow-y: auto; overscroll-behavior: contain;
   background: var(--color-background);
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   padding: 10px var(--gutter) calc(28px + env(safe-area-inset-bottom));
@@ -866,4 +855,105 @@ button.list__row:active { background: var(--color-primary-tint); }
   .wave span { transform: scaleY(var(--h, .5)); }
   .skeleton { animation: none; }
   .spinner { animation: spin 1.6s linear infinite !important; animation-iteration-count: infinite !important; animation-duration: 1.6s !important; }
+}
+
+/* ==========================================================================
+   Layout responsivo
+   mobile (<768): coluna única, barra inferior, ocupa a tela toda como app
+   tablet (768–1023): coluna mais larga, barra inferior centralizada
+   desktop (≥1024): menu lateral + conteúdo em colunas
+   ========================================================================== */
+
+/* Celular na horizontal: barra mais baixa para sobrar espaço de conteúdo */
+@media (max-height: 480px) and (orientation: landscape) {
+  :root { --tabbar-h: 54px; }
+  .tab__label { display: none; }
+  .tab__icon { height: 34px; }
+  .tab.is-active::after { display: none; }
+}
+
+/* Áreas seguras (notch) nas laterais */
+.screens {
+  padding-left: calc(var(--gutter) + env(safe-area-inset-left));
+  padding-right: calc(var(--gutter) + env(safe-area-inset-right));
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  :root { --app-max: 760px; --gutter: 32px; }
+  body { background: var(--color-background); }
+  .app { box-shadow: 0 0 0 1px rgba(76, 60, 50, .05); }
+  .tabbar__inner { max-width: 520px; }
+  .greeting { margin-top: 30px; }
+  .sheet { max-width: 560px; }
+  .report-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .map { height: 380px; }
+}
+
+/* Desktop: menu lateral fixo */
+@media (min-width: 1024px) {
+  :root { --side-w: 248px; --app-max: none; --gutter: 48px; }
+
+  .app { margin: 0 0 0 var(--side-w); max-width: none; box-shadow: none; }
+  .app::before { height: 300px; }
+
+  .screens { max-width: 1120px; margin: 0 auto; padding-bottom: 56px; }
+  .screen { padding-top: 28px; }
+
+  /* A barra inferior vira menu lateral */
+  .tabbar {
+    left: 0; right: auto; top: 0; bottom: 0; width: var(--side-w);
+    padding: 28px 16px 24px; justify-content: stretch; align-items: stretch;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+  }
+  .tabbar__inner {
+    display: flex; flex-direction: column; gap: 6px;
+    max-width: none; height: auto; width: 100%; padding: 0;
+    background: transparent; box-shadow: none; border-radius: 0;
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+  }
+  .tabbar__inner::before {
+    content: ""; display: block; height: 52px; margin: 0 0 22px 10px;
+    background: url("logo.png") left center / contain no-repeat;
+  }
+  .tab {
+    flex-direction: row; justify-content: flex-start; gap: 12px;
+    min-height: 48px; padding: 0 12px 0 8px; border-radius: 14px;
+  }
+  .tab:hover { background: var(--color-primary-tint); }
+  .tab.is-active { background: var(--color-primary-tint); }
+  .tab.is-active .tab__icon { background: transparent; animation: none; }
+  .tab__icon { width: 32px; height: 32px; }
+  .tab__label { font-size: var(--text-base); }
+  .tab.is-active::after {
+    bottom: auto; top: 50%; left: 0; width: 3px; height: 22px; transform: translateY(-50%);
+  }
+
+  .toast-region { left: var(--side-w); bottom: 32px; }
+  .topbar__symbol { display: none; }
+
+  /* Início em duas colunas */
+  #home-content {
+    display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    grid-template-areas: "child child" "now now" "timeline summary" "foot foot";
+    column-gap: 32px; align-items: start;
+  }
+  #home-content > .child-card { grid-area: child; }
+  #home-content > .section:nth-of-type(1) { grid-area: now; }
+  #home-content > .section:nth-of-type(2) { grid-area: summary; }
+  #home-content > .section:nth-of-type(3) { grid-area: timeline; }
+  #home-content > .footnote { grid-area: foot; }
+
+  .report-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .map { height: 440px; }
+  #insights-content, #profile-content { max-width: 860px; }
+
+  /* Sem a barra inferior, o modal centraliza na área de conteúdo */
+  .sheet-layer { padding-left: calc(var(--side-w) + 24px); }
+}
+
+/* Telas muito largas */
+@media (min-width: 1600px) {
+  .screens { max-width: 1240px; }
 }

@@ -1,0 +1,8 @@
+services:
+  sensorypass:
+    build: .
+    image: sensorypass-mock
+    container_name: sensorypass
+    ports:
+      - "8099:80"
+    restart: unless-stopped
