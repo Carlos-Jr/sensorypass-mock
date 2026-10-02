@@ -376,82 +376,56 @@ const TIMELINE_STYLE = {
 };
 
 function renderHome() {
-  const { child, current, summary } = mockData;
-  const items = timelineItems().slice(0, 6);
-  const reportsCount = todayReports().length;
+  const { child, current } = mockData;
+  const items = timelineItems().slice(0, 3);
+  const calm = (LEVELS.activation[current.activationLevel] || 0) <= 2 && (LEVELS.noise[current.noiseLevel] || 0) <= 2;
+  const headline = calm ? "Tudo habitual agora" : "Algo mudou agora";
+  const headIcon = calm ? "smile" : "bell-ring";
 
   $("#home-content").innerHTML = `
-    <article class="card child-card" aria-label="Criança acompanhada">
+    <article class="card hero ${calm ? "hero--calm" : "hero--alert"}" aria-label="Situação atual de ${escapeHTML(child.name)}">
       <span class="avatar avatar--ring" aria-hidden="true"><span>${escapeHTML(child.initials)}</span></span>
-      <div class="child-card__info">
-        <h2 class="child-card__name">${escapeHTML(child.name)}</h2>
-        <p class="child-card__age">${child.age} anos</p>
-        <span class="status"><span class="status__dot" aria-hidden="true"></span>${child.deviceConnected ? "Dispositivo conectado" : "Dispositivo desconectado"}</span>
+      <div class="hero__info">
+        <p class="hero__name">${escapeHTML(child.name)}</p>
+        <h2 class="hero__headline">${headline}</h2>
+        <p class="hero__meta">${icon("map-pin")} ${escapeHTML(current.location)} · atualizado ${escapeHTML(current.updatedAt)}</p>
       </div>
-      <span class="child-card__device" title="Dispositivo SensoryPass">${icon("watch")}<span class="sr-only">Dispositivo SensoryPass</span></span>
+      <span class="hero__icon" aria-hidden="true">${icon(headIcon)}</span>
     </article>
 
-    <section class="section" aria-labelledby="now-title">
-      <div class="section__head">
-        <h2 id="now-title" class="section__title">Agora</h2>
+    <div class="pair">
+      <div class="card pair__item tone-indigo">
+        <span class="pair__label">Ativação</span>
+        <span class="pair__value">${escapeHTML(current.activationLevel)}</span>
+        ${levelBar("activation", current.activationLevel)}
       </div>
-      <div class="now-grid">
-        <div class="card now-card tone-indigo">
-          <span class="now-card__icon">${icon("gauge")}</span>
-          <span class="now-card__label">Nível de ativação</span>
-          <span class="now-card__value">${escapeHTML(current.activationLevel)}${levelBar("activation", current.activationLevel)}</span>
-        </div>
-        <div class="card now-card tone-teal">
-          <span class="now-card__icon">${icon("volume-2")}</span>
-          <span class="now-card__label">Ruído ambiente</span>
-          <span class="now-card__value">${escapeHTML(current.noiseLevel)}${levelBar("noise", current.noiseLevel)}</span>
-        </div>
-        <button class="card card--interactive now-card tone-lilac" type="button" data-goto="location" aria-label="Localização: ${escapeHTML(current.location)}. Abrir mapa">
-          <span class="now-card__icon">${icon("map-pin")}</span>
-          <span class="now-card__label">Localização</span>
-          <span class="now-card__value">${escapeHTML(current.location)}</span>
-        </button>
+      <div class="card pair__item tone-teal">
+        <span class="pair__label">Ruído</span>
+        <span class="pair__value">${escapeHTML(current.noiseLevel)}</span>
+        ${levelBar("noise", current.noiseLevel)}
       </div>
-      <p class="updated">${icon("refresh-cw")} Última atualização: ${escapeHTML(current.updatedAt)}</p>
-    </section>
+    </div>
 
-    <section class="section" aria-labelledby="summary-title">
-      <div class="section__head">
-        <h2 id="summary-title" class="section__title">Resumo de hoje</h2>
-      </div>
-      <div class="card summary">
-        <div class="summary__row">
-          <span class="icon-tile tone-lilac">${icon("message-square-text")}</span>
-          <span class="summary__num" id="sum-reports">${reportsCount}</span>
-          <span class="summary__text">${reportsCount === 1 ? "relato" : "relatos"}</span>
-        </div>
-        <div class="summary__row">
-          <span class="icon-tile tone-teal">${icon("volume-2")}</span>
-          <span class="summary__num">${summary.elevatedNoisePeriods}</span>
-          <span class="summary__text">períodos de ruído elevado</span>
-        </div>
-        <div class="summary__row">
-          <span class="icon-tile tone-coral">${icon("gauge")}</span>
-          <span class="summary__num">${summary.activationChanges}</span>
-          <span class="summary__text">alteração no nível de ativação</span>
-        </div>
-      </div>
-    </section>
+    <button class="btn btn--record home-record" type="button" data-action="record">
+      <span class="btn--record__icon">${icon("mic")}</span>
+      <span class="btn--record__label">
+        <strong>Registrar relato</strong>
+        <small>Fale, nós transcrevemos</small>
+      </span>
+      ${icon("chevron-right")}
+    </button>
 
     <section class="section" aria-labelledby="timeline-title">
       <div class="section__head">
-        <h2 id="timeline-title" class="section__title">Últimos acontecimentos</h2>
-        <span class="section__meta">Hoje</span>
+        <h2 id="timeline-title" class="section__title">Hoje</h2>
+        <button class="link-btn" type="button" data-goto="reports">Ver relatos</button>
       </div>
       <ol class="timeline">
         ${items.map(timelineItem).join("")}
       </ol>
     </section>
 
-    <aside class="footnote">
-      ${icon("shield-check")}
-      <span>${DISCLAIMER} ${PRIVACY} <button type="button" data-action="open-privacy">Sobre os dados</button></span>
-    </aside>
+    <p class="footnote-mini">${DISCLAIMER} <button type="button" data-action="open-privacy">Sobre os dados</button></p>
   `;
   refreshIcons();
 }
