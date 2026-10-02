@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#FFF7F1" />
+  <title>SensoryPass — Demonstração</title>
+  <link rel="icon" type="image/png" href="icon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Splash com o logo completo (recomendado pelo brand guide para telas institucionais) -->
+  <div class="splash" id="splash" aria-hidden="true">
+    <img src="logo.png" alt="" class="splash__logo" />
+    <div class="splash__ribbon"></div>
+  </div>
+
+  <div class="app" id="app">
+    <a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+    <main id="main" class="screens" tabindex="-1">
+      <!-- ============ INÍCIO ============ -->
+      <section class="screen is-active" id="screen-home" data-screen="home" aria-labelledby="home-title">
+        <header class="topbar">
+          <img src="icon.png" alt="SensoryPass" class="topbar__symbol" />
+          <div class="topbar__actions">
+            <span class="badge badge--mock" title="Todos os dados desta demonstração são fictícios">
+              <i data-lucide="flask-conical" aria-hidden="true"></i> Dados simulados
+            </span>
+            <button class="icon-btn" type="button" data-action="open-privacy" aria-label="Sobre os dados e privacidade">
+              <i data-lucide="shield-check" aria-hidden="true"></i>
+            </button>
+            <button class="avatar avatar--sm avatar--btn" type="button" data-goto="profile" aria-label="Abrir perfil de Mariana">M</button>
+          </div>
+        </header>
+
+        <div class="greeting">
+          <h1 id="home-title" class="greeting__title">Olá, <span data-bind="guardian-name"></span></h1>
+          <p class="greeting__text">Veja como foi o dia de <span data-bind="child-name"></span>.</p>
+        </div>
+
+        <div id="home-content"></div>
+      </section>
+
+      <!-- ============ RELATOS ============ -->
+      <section class="screen" id="screen-reports" data-screen="reports" aria-labelledby="reports-title" hidden>
+        <header class="page-head">
+          <div>
+            <h1 id="reports-title" class="page-head__title">Relatos</h1>
+            <p class="page-head__text">Registre acontecimentos do dia a dia de <span data-bind="child-name"></span>.</p>
+          </div>
+        </header>
+
+        <button class="btn btn--record" type="button" data-action="record">
+          <span class="btn--record__icon"><i data-lucide="mic" aria-hidden="true"></i></span>
+          <span class="btn--record__label">
+            <strong>Registrar relato</strong>
+            <small>Fale livremente, nós transcrevemos</small>
+          </span>
+          <i data-lucide="chevron-right" aria-hidden="true" class="btn--record__chev"></i>
+        </button>
+
+        <div id="reports-content"></div>
+      </section>
+
+      <!-- ============ LOCALIZAÇÃO ============ -->
+      <section class="screen" id="screen-location" data-screen="location" aria-labelledby="location-title" hidden>
+        <header class="page-head">
+          <div>
+            <h1 id="location-title" class="page-head__title">Localização</h1>
+            <p class="page-head__text">Última posição registrada pelo dispositivo.</p>
+          </div>
+          <span class="badge badge--mock"><i data-lucide="map-pin-off" aria-hidden="true"></i> Localização simulada</span>
+        </header>
+
+        <div id="location-content"></div>
+      </section>
+
+      <!-- ============ INSIGHTS ============ -->
+      <section class="screen" id="screen-insights" data-screen="insights" aria-labelledby="insights-title" hidden>
+        <header class="page-head">
+          <div>
+            <h1 id="insights-title" class="page-head__title">Insights</h1>
+            <p class="page-head__text">Uma visão dos últimos registros de <span data-bind="child-name"></span>.</p>
+          </div>
+        </header>
+
+        <div id="insights-content"></div>
+      </section>
+      <!-- ============ PERFIL ============ -->
+      <section class="screen" id="screen-profile" data-screen="profile" aria-labelledby="profile-title" hidden>
+        <header class="page-head">
+          <div>
+            <h1 id="profile-title" class="page-head__title">Perfil</h1>
+            <p class="page-head__text">Sua conta, acessos e preferências.</p>
+          </div>
+          <span class="badge badge--mock"><i data-lucide="flask-conical" aria-hidden="true"></i> Dados simulados</span>
+        </header>
+
+        <div id="profile-content"></div>
+      </section>
+    </main>
+
+    <!-- ============ NAVEGAÇÃO INFERIOR ============ -->
+    <nav class="tabbar" aria-label="Navegação principal">
+      <div class="tabbar__inner" role="tablist">
+        <button class="tab is-active" type="button" role="tab" data-tab="home" aria-selected="true" aria-controls="screen-home">
+          <span class="tab__icon"><i data-lucide="house" aria-hidden="true"></i></span>
+          <span class="tab__label">Início</span>
+        </button>
+        <button class="tab" type="button" role="tab" data-tab="reports" aria-selected="false" aria-controls="screen-reports">
+          <span class="tab__icon"><i data-lucide="message-square-text" aria-hidden="true"></i></span>
+          <span class="tab__label">Relatos</span>
+        </button>
+        <button class="tab" type="button" role="tab" data-tab="location" aria-selected="false" aria-controls="screen-location">
+          <span class="tab__icon"><i data-lucide="map-pin" aria-hidden="true"></i></span>
+          <span class="tab__label">Localização</span>
+        </button>
+        <button class="tab" type="button" role="tab" data-tab="insights" aria-selected="false" aria-controls="screen-insights">
+          <span class="tab__icon"><i data-lucide="sparkles" aria-hidden="true"></i></span>
+          <span class="tab__label">Insights</span>
+        </button>
+        <button class="tab" type="button" role="tab" data-tab="profile" aria-selected="false" aria-controls="screen-profile">
+          <span class="tab__icon"><i data-lucide="circle-user-round" aria-hidden="true"></i></span>
+          <span class="tab__label">Perfil</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ============ MODAL / BOTTOM SHEET ============ -->
+    <div class="sheet-layer" id="sheet-layer" hidden>
+      <div class="sheet-backdrop" data-action="close-sheet"></div>
+      <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" tabindex="-1">
+        <div class="sheet__grip" aria-hidden="true"></div>
+        <button class="icon-btn sheet__close" type="button" data-action="close-sheet" aria-label="Fechar">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+        <div class="sheet__body" id="sheet-body"></div>
+      </div>
+    </div>
+
+    <!-- ============ TOAST ============ -->
+    <div class="toast-region" id="toast-region" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
